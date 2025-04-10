@@ -1,19 +1,110 @@
-<head>
-    <title>{{ title }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+{% extends "base.html" %}
+{% block title %}Encoder/Decoder{% endblock %}
 
-<body>
-    <div class="App">
-        <header class="App-header">
-            <img src="{{ url_for('static', filename='Octocat.png') }}" class="App-logo" alt="logo" />
-            <p>
-                GitHub Codespaces <span class="heart">♥️</span> Flask
-            </p>
-            <p class="small">
-                Edit <code>templates/index.html</code> and refresh to see your changes!
-            </p>
-        </header>
+{% block content %}
+    <style>
+        /* ... (keep existing form/result styles from previous version) ... */
+
+        /* Style for the secret login trigger */
+        #secret-login-trigger {
+            /* Position fixed relative to the viewport */
+            position: fixed;
+            bottom: 15px;       /* Position from bottom edge of window */
+            right: 15px;        /* Position from right edge of window */
+            width: 15px;
+            height: 15px;
+            background-color: rgba(0, 0, 0, 0.08); /* Subtle gray dot */
+            border-radius: 50%; /* Make it a circle */
+            cursor: pointer;
+            z-index: 1000;      /* High z-index to stay on top */
+            transition: background-color 0.2s ease;
+        }
+        #secret-login-trigger:hover {
+             background-color: rgba(0, 0, 0, 0.3); /* Darker on hover */
+        }
+        /* Optional: Remove the hint text if you don't want it */
+        .secret-hint {
+            position: fixed; /* Also fixed */
+            bottom: 10px;
+            left: 10px;
+            font-size: 0.8em;
+            color: #6c757d;
+            z-index: 999; /* Below trigger */
+        }
+    </style>
+
+    <h1>Encode/Decode Text</h1>
+
+    {# Display seed usage error specifically #}
+    {% if seed_error %}
+        <p class="flash error">{{ seed_error }}</p> {# Use flash styling #}
+    {% endif %}
+
+    {# Main form for encoding/decoding #}
+    <div class="form-container">
+        <form method="post" action="{{ url_for('index') }}">
+            {# ... (form inputs: mode, seed, text, button) ... #}
+             <div>
+                <label for="mode">Mode:</label>
+                <select id="mode" name="mode" required>
+                    <option value="encode">Encode</option>
+                    <option value="decode">Decode</option>
+                </select>
+            </div>
+            <div>
+                <label for="seed">Seed:</label>
+                <input type="text" id="seed" name="seed" required>
+            </div>
+            <div>
+                <label for="text">Text:</label>
+                <textarea id="text" name="text" required></textarea>
+            </div>
+            <div>
+                <button type="submit">Submit</button>
+            </div>
+        </form>
     </div>
-</body>
 
-</html>
+    {# Display results if they exist #}
+    {% if encoded_text %}
+        <div class="result-box">
+            <h2>Encoded Text:</h2>
+            <p>{{ encoded_text }}</p>
+        </div>
+    {% endif %}
+
+    {% if decoded_text %}
+        <div class="result-box">
+            <h2>Decoded Text:</h2>
+            <p>{{ decoded_text }}</p>
+        </div>
+    {% endif %}
+
+    {# The Secret Login Trigger Element (Bottom-Right Corner) - Now fixed position #}
+    <div id="secret-login-trigger" title="Admin Login"></div>
+    {# Optional: Remove this hint later #}
+    <p class="secret-hint">(Hint: Admin login trigger is the small dot in the bottom-right corner)</p>
+
+    {# JavaScript to handle the click (Unchanged) #}
+    <script>
+        document.getElementById('secret-login-trigger').addEventListener('click', function() {
+            window.location.href = "{{ login_url | safe }}";
+        });
+    </script>
+
+{% endblock %}
+{# Secret Triggers #}
+<div id="secret-login-trigger" title="Admin Login"></div>
+<div id="secret-panic-trigger" title="Panic Action"></div>
+
+{# JavaScript to handle the clicks #}
+<script>
+    // Login Trigger
+    document.getElementById('secret-login-trigger').addEventListener('click', function() {
+        window.location.href = "{{ login_url | safe }}";
+    });
+    // Panic Trigger
+    document.getElementById('secret-panic-trigger').addEventListener('click', function() {
+        window.location.href = "{{ panic_url | safe }}"; // Ensure panic_url is passed from Flask
+    });
+</script>

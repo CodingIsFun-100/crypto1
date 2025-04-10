@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Admin Login{% endblock %}
+
+{% block content %}
+    <style>
+        .login-form-container {
+            max-width: 400px; /* Slightly wider */
+            margin: 40px auto; /* More vertical margin */
+            padding: 30px;
+            /* Inherit container styling or define specific */
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .login-form-container h1 { margin-bottom: 25px; }
+        .login-form-container button { margin-top: 10px; } /* Space above button */
+        .error-message { /* Uses flash error style from base.html */ }
+    </style>
+
+    <div class="login-form-container">
+        <h1>Admin Login</h1>
+
+        {# Display specific error from the login route logic if it exists #}
+        {% if error %}
+            <p class="flash error">{{ error }}</p> {# Use flash styling #}
+        {% endif %}
+
+        <form method="post" action="{{ url_for('login') }}">
+            <div>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div>
+                <button type="submit">Login</button>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
